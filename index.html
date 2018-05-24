@@ -1,0 +1,54 @@
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      color: lightgray;
+      background: blue;
+      margin: 0;
+    }
+    div {
+      font-family: monospace;
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+    [new="true"], *:hover {
+      opacity: 0;
+    }
+  </style>
+
+</head>
+<body>
+  <script>
+        let rangeNames = ["✈️..✍","✊..✍"]
+        let elementNumber = 1000
+        let pickARange = rangeArray => rangeArray[Math.floor(Math.random() * rangeArray.length)]
+        let pickACodePoint = codePointRange => Math.round(Math.min(...codePointRange) + Math.random() * Math.abs(codePointRange[0] - codePointRange[1]))
+        let pickACharAnyChar = rangeArray => String.fromCodePoint(pickACodePoint(pickARange(rangeArray)))
+
+        fetch('./unicodemap.json').then(res => res.json()).then(unicodeMap => {
+
+          var ranges = rangeNames.map(name => unicodeMap[name]).filter(Boolean)
+          console.log(rangeNames)
+          console.log(ranges)
+          let divs = Array.from(new Array(elementNumber), () => {
+            var div = document.createElement('div')
+            div.textContent = pickACharAnyChar(ranges)
+            document.body.appendChild(div)
+            return div
+          })
+
+          setInterval(()=>
+            Array.from(new Array(Math.floor(Math.random() * 30)), () => Math.floor(Math.random() * elementNumber))
+                 .forEach(changeIndex => {
+                    divs[changeIndex].textContent = pickACharAnyChar(ranges)
+                    divs[changeIndex].setAttribute('new', true)
+                    setTimeout(()=>divs[changeIndex].removeAttribute('new'),100)
+                  })
+          ,75)
+        })
+      </script>
+</body>
